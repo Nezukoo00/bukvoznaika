@@ -1,0 +1,10 @@
+{
+  "registry-mirrors": [
+    "https://mirror.gcr.io",
+    "https://dockerhub.timeweb.cloud",
+    "https://huecker.io",
+    "https://dockerhub.ru",
+    "https://cr.yandex"
+  ],
+  "dns": ["8.8.8.8", "8.8.4.4"]
+}
