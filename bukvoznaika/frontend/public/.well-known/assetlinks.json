@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.onrender.bukvoznaika_1.twa",
+        "sha256_cert_fingerprints": ["8B:25:60:6A:3D:59:F3:7F:E8:26:61:A3:C9:66:17:3B:78:6F:26:67:F3:B2:B9:35:A1:A3:47:CD:4D:B1:55:6A"]
+      }
+    }]
