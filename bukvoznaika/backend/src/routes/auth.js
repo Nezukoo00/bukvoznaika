@@ -136,6 +136,16 @@ router.post('/verify-pin', authMiddleware, async (req, res) => {
   }
 });
 
+// GET /api/auth/pin-status — проверка, установлен ли PIN
+router.get('/pin-status', authMiddleware, async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT pin_hash FROM parents WHERE id = $1', [req.user.parentId]);
+    res.json({ hasPin: !!rows[0]?.pin_hash });
+  } catch (err) {
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
 // POST /api/auth/set-pin
 router.post('/set-pin', authMiddleware, async (req, res) => {
   try {

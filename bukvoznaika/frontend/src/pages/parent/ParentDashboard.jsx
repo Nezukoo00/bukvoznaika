@@ -21,8 +21,45 @@ export default function ParentDashboard() {
   const [pinInput, setPinInput] = useState('');
   const [pinVerified, setPinVerified] = useState(false);
   const [pinError, setPinError] = useState('');
+  // PIN-гейт: нужно ли запросить PIN при входе в кабинет
+  const [pinGate, setPinGate] = useState(false);       // показывать экран ввода
+  const [gateInput, setGateInput] = useState('');
+  const [gateError, setGateError] = useState('');
+  const [gateChecking, setGateChecking] = useState(true);
+  const [pinSaved, setPinSaved] = useState(false);     // PIN установлен (для отметки в настройках)
   const { authAPI } = require('../../utils/api');
   const navigate = useNavigate();
+
+  // При входе проверяем, установлен ли PIN — если да, показываем гейт
+  useEffect(() => {
+    (async () => {
+      try {
+        const { hasPin } = await authAPI.pinStatus();
+        setPinGate(hasPin);
+        setPinSaved(hasPin);
+      } catch (e) {
+        setPinGate(false);
+      } finally {
+        setGateChecking(false);
+      }
+    })();
+  }, []);
+
+  const submitGate = async () => {
+    try {
+      const { valid } = await authAPI.verifyPin(gateInput);
+      if (valid) {
+        setPinGate(false);
+        setGateInput('');
+        setGateError('');
+      } else {
+        setGateError('Неверный PIN-код');
+        setGateInput('');
+      }
+    } catch (e) {
+      setGateError('Ошибка проверки');
+    }
+  };
 
   useEffect(() => { loadChildProfiles(); }, []);
 
@@ -55,6 +92,53 @@ export default function ParentDashboard() {
     { name: 'Числа', value: stats.stats.numbers.completed, color: '#A855F7' },
     { name: 'Не начато', value: (33 - stats.stats.alphabet.completed) + (20 - stats.stats.numbers.completed), color: '#E5E7EB' },
   ] : [];
+
+  // Пока проверяем статус PIN — ничего не показываем
+  if (gateChecking) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 48, animation: 'bounce 1s infinite' }}>🔐</div>
+          <p style={{ color: '#6B7280', marginTop: 12 }}>Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Экран ввода PIN-кода (гейт)
+  if (pinGate) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #6D28D9, #A855F7)', padding: 24 }}>
+        <div style={{ fontSize: 64, marginBottom: 16 }}>🔐</div>
+        <h2 style={{ color: 'white', fontFamily: 'var(--font-title)', marginBottom: 8 }}>Родительский контроль</h2>
+        <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: 24, textAlign: 'center' }}>
+          Введите PIN-код для доступа в кабинет
+        </p>
+        <input
+          type="password" inputMode="numeric" autoFocus
+          placeholder="••••" value={gateInput}
+          onChange={e => setGateInput(e.target.value.replace(/\D/g, '').slice(0, 4))}
+          onKeyDown={e => { if (e.key === 'Enter' && gateInput.length === 4) submitGate(); }}
+          style={{
+            fontSize: 32, textAlign: 'center', letterSpacing: 12, width: 200,
+            padding: '12px', borderRadius: 16, border: 'none', marginBottom: 16,
+            fontFamily: 'var(--font-title)',
+          }}
+        />
+        {gateError && <p style={{ color: '#FECACA', marginBottom: 16, fontWeight: 600 }}>⚠️ {gateError}</p>}
+        <div style={{ display: 'flex', gap: 12, width: 280 }}>
+          <button className="btn btn-ghost" style={{ flex: 1, background: 'rgba(255,255,255,0.2)', color: 'white' }}
+            onClick={() => navigate('/profiles')}>
+            Назад
+          </button>
+          <button className="btn btn-secondary" style={{ flex: 2 }}
+            disabled={gateInput.length !== 4} onClick={submitGate}>
+            Войти
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#F8FAFC' }}>
@@ -293,8 +377,13 @@ export default function ParentDashboard() {
                   <p style={{ color: '#6B7280', fontSize: '0.9rem', marginBottom: 12 }}>
                     Защитите родительский кабинет 4-значным PIN-кодом
                   </p>
+                  {pinSaved && (
+                    <p style={{ color: '#16A34A', fontSize: '0.9rem', marginBottom: 12, fontWeight: 600 }}>
+                      ✅ PIN-код установлен. При следующем входе в кабинет он будет запрошен.
+                    </p>
+                  )}
                   <button className="btn btn-secondary btn-block" onClick={() => setPinModal(true)}>
-                    🔐 Установить PIN-код
+                    🔐 {pinSaved ? 'Изменить PIN-код' : 'Установить PIN-код'}
                   </button>
                 </div>
 
@@ -343,7 +432,7 @@ export default function ParentDashboard() {
                   try {
                     const { authAPI: api } = await import('../../utils/api');
                     await api.setPin(pinInput);
-                    setPinModal(false); setPinInput(''); setPinError('');
+                    setPinModal(false); setPinInput(''); setPinError(''); setPinSaved(true);
                   } catch (e) { setPinError(e.message); }
                 }}>
                 Сохранить

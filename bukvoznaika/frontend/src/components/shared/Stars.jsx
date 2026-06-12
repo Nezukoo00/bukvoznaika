@@ -1,8 +1,8 @@
 import React from 'react';
 
-export function Stars({ count = 0, max = 3, size = 28, animate = false }) {
+export function Stars({ count = 0, max = 3, size = 28, animate = false, center = false }) {
   return (
-    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+    <div style={{ display: 'flex', gap: 4, alignItems: 'center', justifyContent: center ? 'center' : 'flex-start' }}>
       {Array.from({ length: max }, (_, i) => (
         <span key={i} style={{
           fontSize: size,

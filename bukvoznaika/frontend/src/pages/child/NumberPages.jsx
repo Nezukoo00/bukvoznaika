@@ -338,7 +338,7 @@ export function NumberLessonPage() {
             <p style={{ color: '#6B7280', marginBottom: 16 }}>
               Ты выучил число {numData.number} — {numData.name}!
             </p>
-            <Stars count={Math.min(mathEx ? 3 : 2, stars)} max={mathEx ? 3 : 2} size={36} animate />
+            <Stars count={Math.min(mathEx ? 3 : 2, stars)} max={mathEx ? 3 : 2} size={36} animate center />
             <div style={{ marginTop: 20, display: 'flex', gap: 12 }}>
               {numIdx < 19 && (
                 <button className="btn btn-secondary" style={{ flex: 1 }}

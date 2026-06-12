@@ -169,10 +169,10 @@ export default function ProfilesPage() {
               </div>
               <div style={{ marginBottom: 16 }}>
                 <label className="input-label">Возраст: {newAge} лет</label>
-                <input type="range" min="4" max="8" value={newAge} onChange={e => setNewAge(+e.target.value)}
+                <input type="range" min="4" max="7" value={newAge} onChange={e => setNewAge(+e.target.value)}
                   style={{ width: '100%', accentColor: '#A855F7' }} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: '#9CA3AF', fontSize: '0.8rem' }}>
-                  <span>4</span><span>8</span>
+                  <span>4</span><span>7</span>
                 </div>
               </div>
               <div style={{ marginBottom: 20 }}>

@@ -314,7 +314,7 @@ export default function LetterLessonPage() {
             <p style={{ color: '#6B7280', marginBottom: 20 }}>
               Ты выучил букву {letterData.letter}!
             </p>
-            <Stars count={Math.min(3, stars)} max={3} size={36} animate />
+            <Stars count={Math.min(3, stars)} max={3} size={36} animate center />
             <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
               {letterIdx < 32 && (
                 <button className="btn btn-secondary" style={{ flex: 1 }}

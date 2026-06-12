@@ -49,6 +49,7 @@ export const authAPI = {
   login: (data) => request('POST', '/auth/login', data),
   verifyPin: (pin) => requestWithRefresh('POST', '/auth/verify-pin', { pin }),
   setPin: (pin) => requestWithRefresh('POST', '/auth/set-pin', { pin }),
+  pinStatus: () => requestWithRefresh('GET', '/auth/pin-status'),
 };
 
 // Children
